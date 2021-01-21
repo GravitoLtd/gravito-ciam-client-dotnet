@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -40,15 +42,35 @@ namespace Gravito.CIAM.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Privacy(string code, string state, string scope, string session_state)
+        public async Task<IActionResult> Secret()
         {
-            await RefreshAccessToken();
+            //await RefreshAccessToken();
 
-            // pass the information to view and show on page
-            // get the claims in id_token
             // timeout access_token then call refresh_token and get it again
 
-            return View();
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+
+            var claims = User.Claims.ToList();
+
+            // get the claims in id_token & access_token
+            var _accessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+            var _idToken = new JwtSecurityTokenHandler().ReadJwtToken(idToken);
+
+            // pass the information to view and show on page
+            var tr = new TokenResponseModel()
+            {
+                AccessToken = accessToken,
+                ReadAccessToken = _accessToken,
+                IdToken = idToken,
+                ReadIdToken = _idToken,
+                RefreshToken = await HttpContext.GetTokenAsync("refresh_token"),
+            };
+
+
+            ViewData["Title"] = "Secret content here";
+
+            return View(tr);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -60,7 +82,7 @@ namespace Gravito.CIAM.Controllers
         private async Task RefreshAccessToken()
         {
             var serverClient = _httpClientFactory.CreateClient();
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://dev-account.gravito.net/");
+            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:44363/");
 
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
