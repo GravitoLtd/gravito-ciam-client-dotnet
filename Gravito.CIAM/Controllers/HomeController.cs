@@ -28,7 +28,6 @@ namespace Gravito.CIAM.Controllers
             // https://localhost:44363/connect/authorize?response_type=code&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&client_id=custom_token_client11&redirect_uri=http://localhost:3000/&scope=API%20openid%20offline_access%20profile&state=xyzABC123
         }
 
-        [ActionName("signin-oidc")]
         public IActionResult Login()
         {
             if (!HttpContext.User.Identity.IsAuthenticated)
