@@ -42,7 +42,7 @@ namespace Gravito.CIAM
                 options.ResponseType = "code";
                 options.SignedOutCallbackPath = "/Home/Index";
                 options.RequireHttpsMetadata = false; // dev only
-
+                options.Prompt = "consent";
                 options.ResponseMode = "form_post";
                 options.CallbackPath = "/signin-oidc";
                 options.UsePkce = false;
