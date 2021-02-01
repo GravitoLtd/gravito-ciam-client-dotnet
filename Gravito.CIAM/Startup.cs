@@ -45,7 +45,7 @@ namespace Gravito.CIAM
                 options.Prompt = "consent";
                 options.ResponseMode = "form_post";
                 options.CallbackPath = "/signin-oidc";
-                options.UsePkce = false;
+                options.UsePkce = true;
 
                 // configure cookie claim mapping
                 options.ClaimActions.DeleteClaim("amr");
@@ -59,32 +59,32 @@ namespace Gravito.CIAM
                 options.Scope.Add("openid");
                 options.Scope.Add("offline_access");
 
-                options.Events.OnRedirectToIdentityProvider = context =>
-                {
-                    // only modify requests to the authorization endpoint
-                    if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
-                    {
-                        // generate code_verifier
-                        var codeVerifier = CryptoRandom.CreateUniqueId(32);
+                //options.Events.OnRedirectToIdentityProvider = context =>
+                //{
+                //    // only modify requests to the authorization endpoint
+                //    if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.Authentication)
+                //    {
+                //        // generate code_verifier
+                //        var codeVerifier = CryptoRandom.CreateUniqueId(32);
 
-                        // store codeVerifier for later use
-                        context.Properties.Items.Add("code_verifier", codeVerifier);
+                //        // store codeVerifier for later use
+                //        context.Properties.Items.Add("code_verifier", codeVerifier);
 
-                        // create code_challenge
-                        string codeChallenge;
-                        using (var sha256 = SHA256.Create())
-                        {
-                            var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
-                            codeChallenge = Base64Url.Encode(challengeBytes);
-                        }
+                //        // create code_challenge
+                //        string codeChallenge;
+                //        using (var sha256 = SHA256.Create())
+                //        {
+                //            var challengeBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(codeVerifier));
+                //            codeChallenge = Base64Url.Encode(challengeBytes);
+                //        }
 
-                        // add code_challenge and code_challenge_method to request
-                        context.ProtocolMessage.Parameters.Add("code_challenge", codeChallenge);
-                        context.ProtocolMessage.Parameters.Add("code_challenge_method", "S256");
-                    }
+                //        // add code_challenge and code_challenge_method to request
+                //        context.ProtocolMessage.Parameters.Add("code_challenge", codeChallenge);
+                //        context.ProtocolMessage.Parameters.Add("code_challenge_method", "S256");
+                //    }
 
-                    return Task.CompletedTask;
-                };
+                //    return Task.CompletedTask;
+                //};
 
                 options.Events.OnAuthorizationCodeReceived = context =>
                 {
