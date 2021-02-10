@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -16,16 +17,17 @@ namespace Gravito.CIAM.Controllers
     public class HomeController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-
-        public HomeController(IHttpClientFactory httpClientFactory)
+        public IConfiguration Configuration { get; }
+        
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
+            Configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
 
         public IActionResult Index()
         {
             return View();
-            // https://localhost:44363/connect/authorize?response_type=code&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&client_id=custom_token_client11&redirect_uri=http://localhost:3000/&scope=API%20openid%20offline_access%20profile&state=xyzABC123
         }
 
         public IActionResult Login()
@@ -81,7 +83,7 @@ namespace Gravito.CIAM.Controllers
         private async Task RefreshAccessToken()
         {
             var serverClient = _httpClientFactory.CreateClient();
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync("https://localhost:44363/");
+            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync(Configuration.GetSection("Identity:ServerAddress").Value);
 
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
