@@ -34,7 +34,7 @@ namespace Gravito.CIAM
             .AddOpenIdConnect("oidc", options =>
             {
                 options.Authority = Configuration.GetSection("Identity:ServerAddress").Value;
-                options.ClientId = "custom_token_client11";
+                options.ClientId = Configuration.GetSection("Identity:ClientId").Value;
                 options.SaveTokens = true;
                 options.ResponseType = "code";
                 options.SignedOutCallbackPath = "/Home/Index";
