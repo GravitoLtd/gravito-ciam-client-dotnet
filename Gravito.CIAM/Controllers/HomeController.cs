@@ -1,14 +1,12 @@
 ﻿using Gravito.CIAM.Models;
 using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -30,29 +28,12 @@ namespace Gravito.CIAM.Controllers
             return View();
         }
 
-        public IActionResult Login()
-        {
-            if (!HttpContext.User.Identity.IsAuthenticated)
-            {
-                return Challenge(OpenIdConnectDefaults.AuthenticationScheme);
-            }
-
-            return RedirectToAction("Index", "Home");
-
-            //return View();
-        }
-
         [Authorize]
         public async Task<IActionResult> Secret()
         {
-            //await RefreshAccessToken();
-
-            // timeout access_token then call refresh_token and get it again
-
             var accessToken = await HttpContext.GetTokenAsync("access_token");
             var idToken = await HttpContext.GetTokenAsync("id_token");
-
-            var claims = User.Claims.ToList();
+            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
 
             // get the claims in id_token & access_token
             var _accessToken = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
@@ -65,7 +46,7 @@ namespace Gravito.CIAM.Controllers
                 ReadAccessToken = _accessToken,
                 IdToken = idToken,
                 ReadIdToken = _idToken,
-                RefreshToken = await HttpContext.GetTokenAsync("refresh_token"),
+                RefreshToken = refreshToken,
             };
 
 
@@ -80,32 +61,35 @@ namespace Gravito.CIAM.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task RefreshAccessToken()
-        {
-            var serverClient = _httpClientFactory.CreateClient();
-            var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync(Configuration.GetSection("Identity:ServerAddress").Value);
+        #region -- Manually refreshes the access_token, we are not using it as IS4 automatically does that for us --
+        //private async Task RefreshAccessToken()
+        //{
+        //    var serverClient = _httpClientFactory.CreateClient();
+        //    var discoveryDocument = await serverClient.GetDiscoveryDocumentAsync(Configuration.GetSection("Identity:ServerAddress").Value);
 
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            var idToken = await HttpContext.GetTokenAsync("id_token");
-            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
-            var refreshTokenClient = _httpClientFactory.CreateClient();
+        //    var accessToken = await HttpContext.GetTokenAsync("access_token");
+        //    var idToken = await HttpContext.GetTokenAsync("id_token");
+        //    var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+        //    var refreshTokenClient = _httpClientFactory.CreateClient();
 
-            var tokenResponse = await refreshTokenClient.RequestRefreshTokenAsync(
-                new RefreshTokenRequest
-                {
-                    Address = discoveryDocument.TokenEndpoint,
-                    RefreshToken = refreshToken,
-                    ClientId = "custom_token_client11",
-                    //ClientSecret = "client_secret_mvc"
-                });
+        //    var tokenResponse = await refreshTokenClient.RequestRefreshTokenAsync(
+        //        new RefreshTokenRequest
+        //        {
+        //            Address = discoveryDocument.TokenEndpoint,
+        //            RefreshToken = refreshToken,
+        //            ClientId = "custom_token_client11",
+        //            //ClientSecret = "client_secret_mvc"
+        //        });
 
-            var authInfo = await HttpContext.AuthenticateAsync("cookie");
+        //    var authInfo = await HttpContext.AuthenticateAsync("cookie");
 
-            authInfo.Properties.UpdateTokenValue("access_token", tokenResponse.AccessToken);
-            authInfo.Properties.UpdateTokenValue("id_token", tokenResponse.IdentityToken);
-            authInfo.Properties.UpdateTokenValue("refresh_token", tokenResponse.RefreshToken);
+        //    authInfo.Properties.UpdateTokenValue("access_token", tokenResponse.AccessToken);
+        //    authInfo.Properties.UpdateTokenValue("id_token", tokenResponse.IdentityToken);
+        //    authInfo.Properties.UpdateTokenValue("refresh_token", tokenResponse.RefreshToken);
 
-            await HttpContext.SignInAsync("cookie", authInfo.Principal, authInfo.Properties);
-        }
+        //    await HttpContext.SignInAsync("cookie", authInfo.Principal, authInfo.Properties);
+        //}
+
+        #endregion
     }
 }
