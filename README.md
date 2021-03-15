@@ -2,7 +2,7 @@
 
 This sample demonstrates how to connect with Gravito IdentityServer using C#.Net to get the `access_token` and `refresh_token` using code flow with PKCE.
 
-You can download the zip or clone the repository from here [GitHub Repository]
+You can download the zip or clone the repository from [GitHub Repository]
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -19,11 +19,11 @@ We have explained how Gravito works as an **Identity Provider** in our detailed 
 ## Tools Required
 
 * Visual Studio 2019
-* Microsoft .Net Core SDK 3.1.* (Haven't tested this sample with latest versions, it might need some changes)
+* Microsoft .Net Core SDK 3.1.* (Haven't tested this sample with upper versions, it might need some changes)
 
 ## Usage Guide
 
-OIDC protocol is being used to connect with IdentityServer using code flow as PKCE as follows:
+OIDC protocol is being used to connect with IdentityServer using code flow with PKCE as follows:
 
 ```c#
 services.AddOpenIdConnect("oidc", options =>
@@ -65,11 +65,10 @@ public async Task<IActionResult> MethodName([parameters])
 * IdentityServer automatically sends the `refresh_token` to server and get the new `access_token` along with updated `refresh_token`.
 
 ## References
-[PKCE]
-[OpenID Documentation]
-[IdentityServer OIDC]
-
-### appsettings.json file
+* [PKCE]
+* [OpenID Documentation]
+* [IdentityServer OIDC]
+* appsettings.json file
 ```json
 "Identity": {
     "ClientId": "client_id",
