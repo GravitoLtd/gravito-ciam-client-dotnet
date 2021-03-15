@@ -1,4 +1,4 @@
-# Gravito CIAM Client Using DotNet
+# Gravito Code Flow .Net Client
 
 This is a sample of connecting to IdentityServer using C# project and get the access_token and refresh_token using code flow with PKCE.
 
