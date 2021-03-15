@@ -1,32 +1,29 @@
 # Gravito Code Flow .Net Client
 
-This is a sample of connecting to IdentityServer using C#.Net project and get the `access_token` and `refresh_token` using code flow with PKCE.
+This sample demonstrates how to connect with Gravito IdentityServer using C#.Net to get the `access_token` and `refresh_token` using code flow with PKCE.
 
-Open and view the project using the `.zip` file provided or at my [GitHub Repository]
+You can download the zip or clone the repository from here [GitHub Repository]
 
 ## Table of Contents
-- [Getting started](#getting-started)
-- [Tools required](#tools-required)
-- [Usage guide](#usage-guide)
-- [What after token is expired?](#what-after-token-is-expired)
-- [Visit us at](#visit-us-at)
+- [Getting Started](#getting-started)
+- [Tools Required](#tools-required)
+- [Usage Guide](#usage-guide)
+- [Handling Expired Token](#handling-expired-token)
+- [References](#references)
+- [Visit Us At](#visit-us-at)
 
 ## Getting Started
 
-You can find the detailed documentation about the **Gravito Identity Management** at [Gravito Docs].
+We have explained how Gravito works as an **Identity Provider** in our detailed documentation at [Gravito Docs].
 
-We have explained how Gravito works as an Identity Provider.
+## Tools Required
 
-Here are a few things which helps you consume the Gravito APIs.
+* Visual Studio 2019
+* Microsoft .Net Core SDK 3.1.* (Haven't tested this sample with latest versions, it might need some changes)
 
-## Tools required
+## Usage Guide
 
-* VS Code OR Visual Studio 2019
-* Microsoft .Net Core SDK 3.1.*
-
-## Usage guide
-
-We are using OIDC here as we want to connect with IdentityServer using code flow with PKCE:
+OIDC protocol is being used to connect with IdentityServer using code flow as PKCE as follows:
 
 ```c#
 services.AddOpenIdConnect("oidc", options =>
@@ -43,17 +40,15 @@ services.AddOpenIdConnect("oidc", options =>
     options.UsePkce = true;
 });
 ```
-### There are few things we need to understand:
+### Option Key Attributes:
 
-* **ResponseType** is a mandatory request parameter which decides which flow to use. e.g. `token` or `code`.
-* **Prompt** is used to show consent page / login page, if required.
+* `ResponseType` is a mandatory request parameter which decides which flow to use. e.g. `token` or `code`.
+* `Prompt` is used to show consent page / login page, if required.
 It specifies whether the authorization server prompts the user for reauthentication and consent.
-* **CallbackPath** after login where to redirect.
-* **UsePkce** by default it is `false`, by setting it to `true` we are using PKCE with code flow.
+* `CallbackPath` after login where to redirect.
+* `UsePkce` by default it is `false`, by setting it to `true` we are using PKCE with code flow.
 
-We can access `ServerAddress` and `ClientId` from `appsettings.json` or from Azure Key-Vault.
-
-Detailed documentation can be accessed from [OpenID Documentation] and [IdentityServer OIDC]
+`ServerAddress` and `ClientId` parameter values can be stored in `appsettings.json` or from Azure Key-Vault.
 
 * To secure API/Method using OpenID Connect, just put an `[Authorize]` attribute before the method/controller.
 ```c#
@@ -66,11 +61,13 @@ public async Task<IActionResult> MethodName([parameters])
 }
 ```
 
-## What after token is expired?
-### Here is what you can do:
-* As an user, we don't need to do anything. IdentityServer takes care of it.
-* Means it sends the `refresh_token` to server and get the new `access_token` along with updated `refresh_token`.
+## Handling Expired Token
+* IdentityServer automatically sends the `refresh_token` to server and get the new `access_token` along with updated `refresh_token`.
 
+## References
+[PKCE]
+[OpenID Documentation]
+[IdentityServer OIDC]
 
 ### appsettings.json file
 ```json
@@ -80,7 +77,7 @@ public async Task<IActionResult> MethodName([parameters])
   }
 ```
 
-## Visit us at
+## Visit Us At
 [Website]
 
 [//]: # (HyperLinks)
@@ -90,3 +87,4 @@ public async Task<IActionResult> MethodName([parameters])
 [GitHub Repository]: https://github.com/GravitoLtd/gravito-ciam-client-dotnet
 [OpenID Documentation]: https://openid.net/developers/specs/
 [IdentityServer OIDC]: https://docs.identityserver.io/en/release/quickstarts/3_interactive_login.html
+[PKCE]: https://oauth.net/2/pkce/
