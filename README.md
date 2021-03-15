@@ -1,6 +1,6 @@
 # Gravito Code Flow .Net Client
 
-This is a sample of connecting to IdentityServer using C# project and get the access_token and refresh_token using code flow with PKCE.
+This is a sample of connecting to IdentityServer using C#.Net project and get the `access_token` and `refresh_token` using code flow with PKCE.
 
 Open and view the project using the `.zip` file provided or at my [GitHub Repository]
 
