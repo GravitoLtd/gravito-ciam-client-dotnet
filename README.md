@@ -55,13 +55,15 @@ We can access `ServerAddress` and `ClientId` from `appsettings.json` or from Azu
 
 Detailed documentation can be accessed from [OpenID Documentation] and [IdentityServer OIDC]
 
-How to secure API/Method using OpenID Connect?
-Just put an `[Authorize]` attribute before that method.
+* To secure API/Method using OpenID Connect, just put an `[Authorize]` attribute before the method/controller.
 ```c#
 using Microsoft.AspNetCore.Authorization;
 
 [Authorize]
-public async Task MethodName([parameters])
+public async Task<IActionResult> MethodName([parameters])
+{
+    return View();
+}
 ```
 
 ## What after token is expired?
