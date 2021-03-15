@@ -48,7 +48,7 @@ It specifies whether the authorization server prompts the user for reauthenticat
 * `CallbackPath` after login where to redirect.
 * `UsePkce` by default it is `false`, by setting it to `true` we are using PKCE with code flow.
 
-`ServerAddress` and `ClientId` parameter values can be stored in `appsettings.json` or from Azure Key-Vault.
+`ServerAddress` and `ClientId` parameter values can be stored in `appsettings.json` or Azure Key-Vault.
 
 * To secure API/Method using OpenID Connect, just put an `[Authorize]` attribute before the method/controller.
 ```c#
